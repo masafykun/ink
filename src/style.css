@@ -1,0 +1,93 @@
+:root {
+  --ink: #eef2ff;
+  --dim: rgba(238, 242, 255, 0.5);
+  font-family: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { width: 100%; height: 100%; overflow: hidden; background: #04040a; color: var(--ink); }
+
+#fluid {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+  z-index: 0;
+}
+
+/* faint vignette to seat the fluid in the frame */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(125% 95% at 50% 50%, transparent 55%, rgba(0, 0, 4, 0.6) 100%);
+}
+
+.brand {
+  position: fixed;
+  top: clamp(18px, 3vw, 40px);
+  left: clamp(18px, 3vw, 46px);
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+.brand-en { font-size: clamp(15px, 1.5vw, 19px); letter-spacing: 0.42em; font-weight: 600; }
+.brand-jp { font-size: clamp(12px, 1.2vw, 14px); letter-spacing: 0.3em; color: var(--dim); }
+
+.hint {
+  position: fixed;
+  bottom: clamp(26px, 6vh, 60px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: var(--dim);
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.8s ease;
+  mix-blend-mode: difference;
+}
+.hint .sub { display: block; margin-top: 8px; font-size: 10px; letter-spacing: 0.3em; }
+body.stirred .hint { opacity: 0; }
+
+.credit {
+  position: fixed;
+  bottom: clamp(14px, 2.5vw, 28px);
+  right: clamp(16px, 3vw, 40px);
+  z-index: 3;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: rgba(238, 242, 255, 0.35);
+  mix-blend-mode: difference;
+}
+.credit a { color: rgba(238, 242, 255, 0.55); text-decoration: none; }
+.credit a:hover { color: var(--ink); }
+
+/* WebGL2 fallback message */
+.fallback { display: none; }
+body.no-webgl .fallback {
+  display: grid;
+  place-items: center;
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  padding: 8vw;
+  text-align: center;
+  line-height: 2;
+  color: var(--dim);
+  font-size: 14px;
+}
+body.no-webgl #fluid { display: none; }
+
+@media (max-width: 640px) {
+  .brand-jp { display: none; }
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="INK（墨流し）— ドラッグで色彩のインクをかき混ぜる、フル画面リアクティブなGPU流体シミュレーション。WebGL2 + Navier–Stokes。" />
+  <meta name="theme-color" content="#04040a" />
+  <meta property="og:title" content="INK — 墨流し" />
+  <meta property="og:description" content="ドラッグで色彩のインクをかき混ぜる、リアルタイムGPU流体。" />
+  <meta property="og:type" content="website" />
+  <title>INK — 墨流し</title>
+</head>
+<body>
+  <canvas id="fluid"></canvas>
+
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="brand">
+    <span class="brand-en">INK</span>
+    <span class="brand-jp">墨流し</span>
+  </header>
+
+  <div class="hint">
+    DRAG TO STIR
+    <span class="sub">ドラッグで、水をかき混ぜる</span>
+  </div>
+
+  <footer class="credit">
+    WebGL2 · Navier–Stokes — <a href="https://github.com/masafykun" target="_blank" rel="noopener">masafy</a>
+  </footer>
+
+  <div class="fallback">
+    お使いのブラウザは WebGL2 に対応していないようです。<br />
+    最新の Chrome / Safari / Firefox でお試しください。
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
