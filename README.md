@@ -1,81 +1,101 @@
-# INK — 墨流し
+# 🌊 INK — 墨流し
 
-A full-screen, reactive GPU fluid. Move the cursor to stir swirling ribbons of
-colour through a dark pool of water — a real-time Navier–Stokes simulation
-running entirely on the GPU in WebGL2.
+> カーソルで暗い水面をかき混ぜ、色とりどりのインクを渦巻かせるフルスクリーン流体。
 
-**Live:** https://ink.1qaz.jp
+INK は WebGL2 上で動くフルスクリーンのリアクティブ GPU 流体です。カーソルを動かすと、暗い水のプールに色彩のリボンが渦を描いて広がります。ライブラリに頼らず、生の WebGL2 と GLSL だけで実装したリアルタイムの Navier–Stokes シミュレーションです（JavaScript は約 16 KB）。
 
-![INK](docs/01-hero.png)
+![WebGL2](https://img.shields.io/badge/WebGL2-990000?style=flat-square&logo=webgl&logoColor=white)
+![GLSL](https://img.shields.io/badge/GLSL_ES-5586A4?style=flat-square)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
+
+🔗 **[Live Demo](https://ink.1qaz.jp)**
 
 ---
 
-## What it is
+## 📸 スクリーンショット
 
-INK is a "stable fluids" solver (Jos Stam / GPU Gems) implemented as a chain of
-fragment-shader passes ping-ponging between floating-point framebuffers. Each
-frame the velocity field is advected, made divergence-free with a Jacobi
-pressure solve, and given its swirl back with vorticity confinement; a separate
-dye field is carried along to colour the flow.
-
-There is no library doing the heavy lifting — just raw WebGL2 and GLSL, ~16 KB
-of JavaScript.
+![hero](docs/01-hero.png)
 
 ![flow](docs/02-flow.png)
 
-## How it reacts
+---
 
-- **Move / drag** anywhere to inject velocity and colour. Plain hover stirs the
-  water in a slowly cycling rainbow; press and drag for a fresh hue.
-- **Touch** is fully supported, including multiple fingers at once.
-- When left alone, gentle ambient puffs keep the pool alive and inviting.
+## 🎮 操作方法 / 見方
 
-## The solver, pass by pass
-
-Each simulation step runs these shader programs in order (see `src/shaders.js`):
-
-| Pass | Purpose |
-|------|---------|
-| curl + vorticity | measure and re-inject swirl the solver would otherwise damp |
-| divergence | how much the velocity field is compressing / expanding |
-| pressure (×20 Jacobi) | solve the pressure that cancels that divergence |
-| gradient subtract | make the velocity field incompressible |
-| advection | carry velocity and dye along the flow |
-| splat | add a soft gaussian of velocity + colour at the pointer |
-| display | composite dye with embossed shading + a soft glow |
-
-## Tech stack
-
-- **WebGL2** + **GLSL ES** (half-float render targets, `EXT_color_buffer_float`)
-- **Vite** build — pure static output, no backend, no dependencies
-- Display adds gradient-based shading and a cheap bloom so the flat fluid reads
-  as a glowing, liquid surface
-
-## Project structure
-
-```
-index.html      # canvas + brand / hint / credit overlay
-src/
-  main.js       # boot the solver, fade the hint on first stir
-  fluid.js      # the WebGL2 solver: FBOs, programs, step loop, pointer input
-  shaders.js    # every GLSL pass
-  style.css     # overlay / typography / vignette
-```
-
-## Run locally
-
-```bash
-npm install
-npm run dev      # http://localhost:5173
-npm run build    # → dist/  (static, deploy anywhere)
-```
-
-Requires a WebGL2-capable browser (any recent Chrome / Safari / Firefox / Edge).
+| 操作 | 動作 |
+|---|---|
+| 移動 / ドラッグ | 速度と色を注入。ホバーするとゆっくり循環する虹色で水をかき混ぜ、押しながらドラッグすると新しい色相になる |
+| タッチ | 完全対応。複数の指による同時操作も可能 |
+| 放置 | しばらく操作しないと、穏やかなアンビエントの揺らぎがプールを生き生きと保つ |
 
 ---
 
-Built by [masafy](https://github.com/masafykun), part of a small series of
-WebGL experiments alongside
-[VOYAGE](https://github.com/masafykun/voyage),
-[ORB](https://github.com/masafykun/kodou-orb) and
-[FLUX](https://github.com/masafykun/yuragi-flux).
+## ✨ 特徴
+
+- **ライブラリ不使用** — 生の WebGL2 と GLSL のみ。重い処理を担う外部ライブラリは一切なし
+- **Stable Fluids ソルバー** — Jos Stam / GPU Gems の手法を、浮動小数点フレームバッファ間で ping-pong するフラグメントシェーダのチェーンとして実装
+- **vorticity confinement** — ソルバーが減衰させてしまう渦を計測して再注入し、流れの躍動感を保つ
+- **発光する液体の質感** — display パスで勾配ベースのシェーディングと軽量なブルームを加え、平坦な流体を発光する液面として見せる
+
+各フレームでは、速度場を advection（移流）し、Jacobi 法による pressure solve で divergence-free（非圧縮）にし、vorticity confinement で渦を戻します。別途、dye（染料）フィールドが流れに乗って色を運びます。
+
+### ソルバーのパス構成
+
+各シミュレーションステップは以下のシェーダプログラムを順に実行します（`src/shaders.js` 参照）。
+
+| パス | 役割 |
+|---|---|
+| curl + vorticity | ソルバーが減衰させる渦を計測し再注入する |
+| divergence | 速度場がどれだけ圧縮 / 膨張しているかを求める |
+| pressure（×20 Jacobi） | その divergence を打ち消す圧力を解く |
+| gradient subtract | 速度場を非圧縮にする |
+| advection | 速度と dye を流れに沿って運ぶ |
+| splat | ポインタ位置に速度と色の柔らかいガウシアンを加える |
+| display | dye をエンボス調シェーディング + ソフトグローで合成する |
+
+---
+
+## 🛠️ 技術スタック
+
+| カテゴリ | 技術 |
+|---|---|
+| 描画 | WebGL2 + GLSL ES（half-float レンダーターゲット、`EXT_color_buffer_float`） |
+| シミュレーション | GPU 上の Navier–Stokes（stable fluids）ソルバー |
+| ビルド | Vite（純粋な静的出力。バックエンド・依存ライブラリなし） |
+| 表現 | display パスで勾配ベースのシェーディングと軽量ブルームを付加 |
+
+### プロジェクト構成
+
+```
+index.html      # canvas + ブランド / ヒント / クレジットのオーバーレイ
+src/
+  main.js       # ソルバー起動、初回操作でヒントをフェードアウト
+  fluid.js      # WebGL2 ソルバー本体：FBO、プログラム、step ループ、ポインタ入力
+  shaders.js    # すべての GLSL パス
+  style.css     # オーバーレイ / タイポグラフィ / ビネット
+```
+
+---
+
+## 🚀 セットアップ
+
+```bash
+npm install
+npm run dev      # http://localhost:5173 で起動
+npm run build    # → dist/（静的ファイル。どこへでもデプロイ可能）
+```
+
+WebGL2 対応ブラウザが必要です（最近の Chrome / Safari / Firefox / Edge）。
+
+---
+
+## ライセンス
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+このプロジェクトは **MIT ライセンス** のもとで公開しています。
+
+WebGL 実験シリーズの一作で、[VOYAGE](https://github.com/masafykun/voyage)、[ORB](https://github.com/masafykun/kodou-orb)、[FLUX](https://github.com/masafykun/yuragi-flux) と並ぶ作品です。
+
+© 2026 masafykun (https://github.com/masafykun)
