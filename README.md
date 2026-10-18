@@ -9,7 +9,7 @@ INK は WebGL2 上で動くフルスクリーンのリアクティブ GPU 流体
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
 
-🔗 **[Live Demo](https://ink.1qaz.jp)**
+🔗 **[Live Demo](https://masafykun.github.io/ink/)**
 
 ---
 
